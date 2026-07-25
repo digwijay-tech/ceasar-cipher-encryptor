@@ -69,19 +69,19 @@ export function CipherTool() {
         </div>
 
         {/* Shift Selector */}
-        <div className="flex items-center justify-between gap-4 bg-zinc-50/50 dark:bg-zinc-950/20 p-4 rounded-xl border border-zinc-100 dark:border-zinc-800/50">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 bg-zinc-50/50 dark:bg-zinc-950/20 p-4 rounded-xl border border-zinc-100 dark:border-zinc-800/50">
           <div className="flex flex-col">
             <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Shift key</span>
             <span className="text-xs text-zinc-400 dark:text-zinc-500">Number of letters to shift</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 w-full sm:w-auto">
             <input
               type="range"
               min="1"
               max="25"
               value={shift}
               onChange={(e) => setShift(Number(e.target.value))}
-              className="accent-zinc-900 dark:accent-zinc-100 h-1.5 w-32 rounded-lg bg-zinc-200 dark:bg-zinc-800 cursor-pointer"
+              className="accent-zinc-900 dark:accent-zinc-100 h-1.5 flex-1 sm:w-32 sm:flex-none rounded-lg bg-zinc-200 dark:bg-zinc-800 cursor-pointer"
             />
             <span className="w-8 text-right font-mono text-sm font-bold text-zinc-800 dark:text-zinc-200">
               {shift}
