@@ -18,5 +18,5 @@ A simple web application built with **Next.js** that encrypts and decrypts text 
 ## Getting Started
 
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm dev
