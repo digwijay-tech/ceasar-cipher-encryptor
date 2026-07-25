@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { CipherTool } from "@/features/cipher";
+import { OnboardingModal } from "@/features/onboarding";
 import logo from "./favicon.ico";
 
 export default function Home() {
@@ -26,6 +27,8 @@ export default function Home() {
           />
         </div>
       </header>
+
+      <OnboardingModal />
 
       <main className="flex-1 w-full max-w-4xl mx-auto px-6 pb-24 flex flex-col items-center">
         <CipherTool />
