@@ -26,13 +26,19 @@ const alphabets = [
   "y",
   "z",
 ];
-const encryptedMessage = [];
-const userInput = "i was a don";
-const splitedUserInput = userInput.split("");
-function ceasarCipher() {
+let encryptedMessage = "";
+let decryptedMessage = "";
+const userInput = "Pravana Anil";
+
+function encryptMessage() {
+  const encryptedMessageArray = [];
+  const splitedUserInput = userInput.split("");
   for (ui = 0; ui < splitedUserInput.length; ui++) {
     // console.log(splitedUserInput[ui]);
-    if (splitedUserInput[ui] === " ") continue;
+    if (splitedUserInput[ui] === " ") {
+      encryptedMessageArray.push(splitedUserInput[ui]);
+      continue;
+    }
     let indexSplit = alphabets.indexOf(splitedUserInput[ui]);
     // console.log(indexSplit);
     let indexEncrypt = indexSplit - 7;
@@ -40,11 +46,36 @@ function ceasarCipher() {
     if (indexEncrypt <= -1) {
       indexEncrypt = alphabets.length + indexEncrypt;
     }
-    console.log(indexEncrypt);
-    encryptedMessage.push(alphabets[indexEncrypt]);
+    // console.log(indexEncrypt);
+    encryptedMessageArray.push(alphabets[indexEncrypt]);
   }
-  console.log(encryptedMessage.join(""));
-
+  encryptedMessage = encryptedMessageArray.join("");
+  console.log(encryptedMessage);
 }
 
-ceasarCipher();
+function decryptMessage() {
+  const decryptedMessageArray = [];
+  const splitedUserInput = encryptedMessage.split("");
+  for (i = 0; i <splitedUserInput.length; i++) {
+
+    let indexOfDecrypt = (alphabets.indexOf(splitedUserInput[i])) + 7;
+    // console.log(indexOfDecrypt);
+    
+    if (splitedUserInput[i] === " ") {
+      decryptedMessageArray.push(splitedUserInput[i]);
+      continue;
+    }
+    // console.log(splitedUserInput[i]);
+
+    if (indexOfDecrypt >= alphabets.length) {
+      indexOfDecrypt = indexOfDecrypt - alphabets.length;
+    }
+    //  console.log(indexOfDecrypt);
+    decryptedMessageArray.push(alphabets[indexOfDecrypt]);
+  }
+  decryptedMessage = decryptedMessageArray.join("");
+  console.log(decryptedMessage);
+}
+
+encryptMessage();
+decryptMessage();
