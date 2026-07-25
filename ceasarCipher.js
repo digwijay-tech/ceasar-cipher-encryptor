@@ -28,7 +28,7 @@ const alphabets = [
 ];
 let encryptedMessage = "";
 let decryptedMessage = "";
-const userInput = "Pravana Anil";
+const userInput = "pravana anil";
 
 function encryptMessage() {
   const encryptedMessageArray = [];
