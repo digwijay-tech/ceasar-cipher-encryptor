@@ -29,7 +29,7 @@ const steps: Step[] = [
     ),
     title: "Encrypting a Message",
     description:
-      "Select \"Encrypt\" mode, type your secret message, choose a shift key (1–25), and your encrypted message appears instantly. Copy it and share it with your recipient!",
+      "Select \"Encrypt\" mode, type your message, choose a shift key (1–25), and note the generated 4-letter secret code. Copy the encrypted text and share it with your recipient.",
   },
   {
     icon: (
@@ -39,7 +39,17 @@ const steps: Step[] = [
     ),
     title: "Decrypting a Message",
     description:
-      "Switch to \"Decrypt\" mode, paste the encrypted text, use the same shift key that was used to encrypt, and the original message is revealed.",
+      "Switch to \"Decrypt\" mode, paste the encrypted text, enter the same 4-letter secret code, and use the shift key to reveal the original message.",
+  },
+  {
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+      </svg>
+    ),
+    title: "Secret Verification Code",
+    description:
+      "A 4-letter secret code is generated when encrypting a message. To decrypt and read the message, the recipient must enter this exact code alongside the shift key.",
   },
   {
     icon: (
@@ -53,8 +63,20 @@ const steps: Step[] = [
   },
 ];
 
-export function OnboardingModal() {
-  const [isOpen, setIsOpen] = useState(false);
+interface OnboardingModalProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+export function OnboardingModal({ isOpen: controlledIsOpen, onClose: controlledOnClose }: OnboardingModalProps = {}) {
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
+  const setIsOpen = (val: boolean) => {
+    if (controlledIsOpen === undefined) {
+      setInternalIsOpen(val);
+    }
+  };
+
   const [dontShowAgain, setDontShowAgain] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
@@ -70,13 +92,16 @@ export function OnboardingModal() {
     } catch {
       // localStorage unavailable, skip
     }
-  }, []);
+  }, [controlledIsOpen]);
 
   const handleClose = useCallback(() => {
     setIsClosing(true);
     setTimeout(() => {
       setIsOpen(false);
       setIsClosing(false);
+      if (controlledOnClose) {
+        controlledOnClose();
+      }
       if (dontShowAgain) {
         try {
           localStorage.setItem(STORAGE_KEY, "true");
@@ -85,7 +110,7 @@ export function OnboardingModal() {
         }
       }
     }, 250);
-  }, [dontShowAgain]);
+  }, [dontShowAgain, controlledOnClose]);
 
   const handleGetStarted = useCallback(() => {
     // Always mark as seen when the user completes the walkthrough
@@ -98,8 +123,18 @@ export function OnboardingModal() {
     setTimeout(() => {
       setIsOpen(false);
       setIsClosing(false);
+      if (controlledOnClose) {
+        controlledOnClose();
+      }
     }, 250);
-  }, []);
+  }, [controlledOnClose]);
+
+  // Reset activeStep to 0 whenever modal is opened
+  useEffect(() => {
+    if (isOpen) {
+      setActiveStep(0);
+    }
+  }, [isOpen]);
 
   // Close on Escape key
   useEffect(() => {

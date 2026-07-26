@@ -7,7 +7,11 @@ export function CipherTool() {
   const [inputText, setInputText] = useState("");
   const [shift, setShift] = useState(7);
   const [mode, setMode] = useState<"encrypt" | "decrypt">("encrypt");
-  const [secretCode, setSecretCode] = useState(() => generateSecretCode());
+  const [secretCode, setSecretCode] = useState("");
+
+  useEffect(() => {
+    setSecretCode(generateSecretCode());
+  }, []);
 
   let result = "";
   let errorMsg = "";
@@ -123,7 +127,7 @@ export function CipherTool() {
             </div>
             <div className="flex items-center gap-3">
               <span className="px-3 py-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg font-mono text-sm font-bold tracking-wider text-zinc-800 dark:text-zinc-200 select-all">
-                {secretCode}
+                {secretCode || "••••"}
               </span>
               <button
                 onClick={() => setSecretCode(generateSecretCode())}
