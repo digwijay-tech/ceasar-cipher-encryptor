@@ -54,3 +54,16 @@ export function decryptMessage(encryptedMessage: string, shift = 7): string {
 
   return decryptedMessageArray.join("");
 }
+
+/**
+ * Generates a random 4-letter alphabetic secret code.
+ */
+export function generateSecretCode(): string {
+  let code = "";
+  for (let i = 0; i < 4; i++) {
+    const randomIndex = Math.floor(Math.random() * alphabets.length);
+    code += alphabets[randomIndex];
+  }
+  return code;
+}
+

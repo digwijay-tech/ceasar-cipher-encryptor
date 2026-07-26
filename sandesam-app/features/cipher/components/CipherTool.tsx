@@ -1,16 +1,40 @@
 "use client";
 
-import React, { useState } from "react";
-import { encryptMessage, decryptMessage } from "../utils/cipher";
+import React, { useState, useEffect } from "react";
+import { encryptMessage, decryptMessage, generateSecretCode } from "../utils/cipher";
 
 export function CipherTool() {
   const [inputText, setInputText] = useState("");
   const [shift, setShift] = useState(7);
   const [mode, setMode] = useState<"encrypt" | "decrypt">("encrypt");
+  const [secretCode, setSecretCode] = useState(() => generateSecretCode());
 
-  const result = mode === "encrypt" 
-    ? encryptMessage(inputText, shift)
-    : decryptMessage(inputText, shift);
+  let result = "";
+  let errorMsg = "";
+
+  if (mode === "encrypt") {
+    if (inputText) {
+      result = encryptMessage(inputText + secretCode, shift);
+    }
+  } else {
+    if (inputText && secretCode) {
+      if (secretCode.length !== 4) {
+        errorMsg = "Secret code must be exactly 4 letters.";
+      } else {
+        const decrypted = decryptMessage(inputText, shift);
+        if (decrypted.length >= 4) {
+          const suffix = decrypted.slice(-4);
+          if (suffix.toLowerCase() === secretCode.toLowerCase()) {
+            result = decrypted.slice(0, -4);
+          } else {
+            errorMsg = "the code is not the same";
+          }
+        } else {
+          errorMsg = "the code is not the same";
+        }
+      }
+    }
+  }
 
   const handleCopy = () => {
     navigator.clipboard.writeText(result);
@@ -21,6 +45,7 @@ export function CipherTool() {
       setMode(newMode);
       setInputText("");
       setShift(7);
+      setSecretCode(newMode === "encrypt" ? generateSecretCode() : "");
     }
   };
 
@@ -89,8 +114,57 @@ export function CipherTool() {
           </div>
         </div>
 
+        {/* Secret Code Section */}
+        {mode === "encrypt" ? (
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 bg-zinc-50/50 dark:bg-zinc-950/20 p-4 rounded-xl border border-zinc-100 dark:border-zinc-800/50">
+            <div className="flex flex-col">
+              <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Secret Code</span>
+              <span className="text-xs text-zinc-400 dark:text-zinc-500">4-letter code stitched before encrypting</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="px-3 py-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg font-mono text-sm font-bold tracking-wider text-zinc-800 dark:text-zinc-200 select-all">
+                {secretCode}
+              </span>
+              <button
+                onClick={() => setSecretCode(generateSecretCode())}
+                className="p-1.5 rounded-lg bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200 shadow-sm"
+                title="Regenerate secret code"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-4 h-4"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2">
+            <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+              4-Letter Secret Code
+            </label>
+            <input
+              type="text"
+              maxLength={4}
+              value={secretCode}
+              onChange={(e) => setSecretCode(e.target.value.replace(/[^a-zA-Z]/g, "").toLowerCase())}
+              placeholder="Enter 4-letter secret code"
+              className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-transparent text-zinc-800 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 focus:border-transparent transition-all duration-200 font-mono text-sm tracking-wider"
+            />
+          </div>
+        )}
+
         {/* Result Area */}
-        {result && (
+        {result && !errorMsg && (
           <div className="flex flex-col gap-2 animate-fadeIn">
             <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
               Output Result
@@ -122,7 +196,20 @@ export function CipherTool() {
             </div>
           </div>
         )}
+
+        {/* Verification Failure Message */}
+        {errorMsg && (
+          <div className="flex flex-col gap-2 animate-fadeIn">
+            <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+              Decryption Status
+            </label>
+            <div className="w-full px-4 py-3 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900/50 font-sans text-sm text-red-600 dark:text-red-400">
+              {errorMsg}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 }
+
