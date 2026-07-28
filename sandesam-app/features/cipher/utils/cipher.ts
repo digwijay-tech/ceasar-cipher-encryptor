@@ -14,7 +14,7 @@ export function encryptMessage(userInput: string, shift = 7): string {
   for (let i = 0; i < splittedUserInput.length; i++) {
     const char = splittedUserInput[i];
     if (char === " " || !alphabets.includes(char)) {
-      encryptedMessageArray.push(char);
+      encryptedMessageArray.push(" ");
       continue;
     }
     const indexSplit = alphabets.indexOf(char);

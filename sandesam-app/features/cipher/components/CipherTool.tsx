@@ -18,7 +18,11 @@ export function CipherTool() {
 
   if (mode === "encrypt") {
     if (inputText) {
-      result = encryptMessage(inputText + secretCode, shift);
+      if (inputText.includes("\u2004")) {
+        errorMsg = "This message is already encrypted. Cant use here.";
+      } else {
+        result = encryptMessage(inputText + secretCode, shift);
+      }
     }
   } else {
     if (inputText && secretCode) {
@@ -205,7 +209,7 @@ export function CipherTool() {
         {errorMsg && (
           <div className="flex flex-col gap-2 animate-fadeIn">
             <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
-              Decryption Status
+              {mode === "encrypt" ? "Encryption Status" : "Decryption Status"}
             </label>
             <div className="w-full px-4 py-3 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900/50 font-sans text-sm text-red-600 dark:text-red-400">
               {errorMsg}
